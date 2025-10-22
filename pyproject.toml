@@ -180,6 +180,7 @@ ignore = [
   "ASYNC109",
   "ASYNC110",
   "A005",
+  "N999", # Invalid module name (repository name contains hyphens)
 ]
 
 select = ["ALL"]
