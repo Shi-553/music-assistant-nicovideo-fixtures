@@ -15,13 +15,13 @@ This tooling is kept separate from both:
 ## Structure
 
 ```
-.
-├── scripts/             # Fixture generation scripts
+src
+├── fixture_generator/   # Fixture generation scripts
 │   └── main.py          # Entry point
-├── fixture_data/        # Generated fixture data
-│   ├── fixtures/        # JSON fixture files by category
-│   ├── fixture_type_mappings.py  # Auto-generated type mappings
-│   └── shared_types.py  # Custom fixture types
+└── fixture_data/        # Generated fixture data
+    ├── fixtures/        # JSON fixture files by category
+    ├── fixture_type_mappings.py  # Auto-generated type mappings
+    └── shared_types.py  # Custom fixture types
 ```
 
 ## Usage
@@ -54,7 +54,7 @@ pip install -e .
 export NICONICO_SESSION='your_test_account_session_token'
 
 # Run fixture generation
-python scripts/main.py
+python src/fixture_generator/main.py
 ```
 
 ### Update Fixtures in Music Assistant
@@ -63,12 +63,12 @@ After generating fixtures, copy them to the Music Assistant repository:
 
 ```bash
 # Copy entire fixture_data directory
-cp -r fixture_data /path/to/music-assistant/server/tests/providers/nicovideo/
+cp -r src/fixture_data /path/to/music-assistant/server/tests/providers/nicovideo/
 ```
 
 The generated files include:
-- `fixture_data/fixtures/**/*.json` - API response fixtures organized by category
-- `fixture_data/fixture_type_mappings.py` - Auto-generated type mappings for deserialization
+- `src/fixture_data/fixtures/**/*.json` - API response fixtures organized by category
+- `src/fixture_data/fixture_type_mappings.py` - Auto-generated type mappings for deserialization
 
 ## Security Note
 

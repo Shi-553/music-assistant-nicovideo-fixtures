@@ -30,7 +30,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from fixture_generator.generation_orchestrator import FixtureGenerationOrchestrator
+from src.fixture_generator.generation_orchestrator import FixtureGenerationOrchestrator
 
 # Logging configuration
 logging.basicConfig(level=logging.INFO)

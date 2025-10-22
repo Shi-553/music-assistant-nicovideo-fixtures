@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, TextIO
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
-    from fixture_generator.types import FixtureAPIResult
+    from src.fixture_generator.types import FixtureAPIResult
 
 logger = logging.getLogger(__name__)
 

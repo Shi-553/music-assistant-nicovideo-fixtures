@@ -5,8 +5,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from fixture_data.shared_types import StreamFixtureData
-from fixture_generator.constants import (
+from src.fixture_data.shared_types import StreamFixtureData
+from src.fixture_generator.constants import (
     SAMPLE_MYLIST_ID,
     SAMPLE_SERIES_ID,
     SAMPLE_USER_ID,
@@ -16,7 +16,7 @@ from fixture_generator.constants import (
 if TYPE_CHECKING:
     from niconico import NicoNico
 
-    from fixture_generator.types import FixtureProcessorProtocol
+    from src.fixture_generator.types import FixtureProcessorProtocol
 
 logger = logging.getLogger(__name__)
 

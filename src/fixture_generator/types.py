@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Coroutine
+from collections.abc import Callable, Coroutine
 from typing import TYPE_CHECKING, Any, Literal, Protocol, TypeGuard, get_args
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-
     from pydantic import BaseModel, JsonValue
 
 FixtureCategory = Literal["tracks", "playlists", "albums", "artists", "search", "history", "stream"]

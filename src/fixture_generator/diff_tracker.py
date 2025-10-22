@@ -7,8 +7,8 @@ import json
 import logging
 from pathlib import Path
 
-from fixture_generator.constants import GENERATED_FIXTURES_DIR
-from fixture_generator.types import JsonContainer
+from src.fixture_generator.constants import GENERATED_FIXTURES_DIR
+from src.fixture_generator.types import JsonContainer
 
 logger = logging.getLogger(__name__)
 
