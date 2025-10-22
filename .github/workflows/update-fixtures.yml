@@ -103,12 +103,20 @@ jobs:
           script: |
             const fs = require('fs');
             const date = new Date().toISOString().split('T')[0];
-            const fileCount = '${{ steps.check_changes.outputs.file_count }}';
+            const fileCount = '${{ steps.check_changes.outputs.file_count }}' || '0';
             const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
 
-            // Read files
-            const changedFiles = fs.readFileSync('changed-files.txt', 'utf8').trim();
-            const diffStat = fs.readFileSync('diff-stat.txt', 'utf8').trim();
+            // Read files safely (they may not exist if no changes)
+            let changedFiles = 'No changes detected';
+            let diffStat = 'No changes detected';
+
+            if (fs.existsSync('changed-files.txt')) {
+              changedFiles = fs.readFileSync('changed-files.txt', 'utf8').trim();
+            }
+            if (fs.existsSync('diff-stat.txt')) {
+              diffStat = fs.readFileSync('diff-stat.txt', 'utf8').trim();
+            }
+
             const updateLog = fs.readFileSync('fixture-update.log', 'utf8');
 
             // Truncate log if too long (GitHub issue body limit is ~65536 chars)
