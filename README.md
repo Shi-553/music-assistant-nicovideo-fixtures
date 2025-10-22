@@ -16,10 +16,12 @@ This tooling is kept separate from both:
 
 ```
 .
-├── scripts/           # Fixture generation scripts
-├── fixtures/          # Generated fixture JSON files
-├── pyproject.toml     # Project dependencies
-└── README.md
+├── scripts/             # Fixture generation scripts
+│   └── main.py          # Entry point
+├── fixture_data/        # Generated fixture data
+│   ├── fixtures/        # JSON fixture files by category
+│   ├── fixture_type_mappings.py  # Auto-generated type mappings
+│   └── shared_types.py  # Custom fixture types
 ```
 
 ## Usage
@@ -41,15 +43,9 @@ cd music-assistant-nicovideo-fixtures
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-# Install this package
+# Install dependencies
 pip install -e .
-
-# Install Music Assistant server in editable mode (required dependency)
-# This assumes you have the Music Assistant server repository cloned
-pip install -e /path/to/music-assistant/server
 ```
-
-**Note:** This tool requires the Music Assistant server to be installed as it uses the provider's service managers and converters for fixture generation.
 
 ### Generate Fixtures
 
@@ -66,9 +62,13 @@ python scripts/main.py
 After generating fixtures, copy them to the Music Assistant repository:
 
 ```bash
-# From this repository root
-cp -r fixtures/* /path/to/music-assistant/server/tests/providers/nicovideo/fixtures/
+# Copy entire fixture_data directory
+cp -r fixture_data /path/to/music-assistant/server/tests/providers/nicovideo/
 ```
+
+The generated files include:
+- `fixture_data/fixtures/**/*.json` - API response fixtures organized by category
+- `fixture_data/fixture_type_mappings.py` - Auto-generated type mappings for deserialization
 
 ## Security Note
 

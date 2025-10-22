@@ -25,6 +25,10 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
 
 from scripts.generation_orchestrator import FixtureGenerationOrchestrator
 

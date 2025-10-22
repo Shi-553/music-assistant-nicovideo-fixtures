@@ -19,7 +19,7 @@ from niconico.objects.user import NicoUser, UserMylistItem, UserSeriesItem
 from niconico.objects.video import Mylist
 from niconico.objects.video.watch import WatchData
 
-from fixture_data.shared_types import StreamFixtureData
+from .shared_types import StreamFixtureData
 
 if TYPE_CHECKING:
     from pydantic import BaseModel

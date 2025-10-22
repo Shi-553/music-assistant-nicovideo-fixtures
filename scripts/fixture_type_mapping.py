@@ -106,11 +106,7 @@ class FixtureTypeMappingFileGenerator:
             self._write_type_checking_block(f)
             self._write_mappings(f)
 
-        # Generate __init__.py file
-        self._generate_init_file(output_path.parent)
-
         logger.info(f"Generated path->type mapping at {output_path}")
-        logger.info(f"Generated __init__ at {output_path.parent / '__init__.py'}")
         logger.info("Note: Run 'ruff check --fix' to format the generated files")
 
         # Format with ruff
@@ -130,7 +126,11 @@ class FixtureTypeMappingFileGenerator:
                     or fixture_type.__module__.startswith("fixture_data.")
                 )
             ):
-                needed_imports.add((fixture_type.__module__, fixture_type.__name__))
+                module = fixture_type.__module__
+                # Use relative import for shared_types in same package
+                if module == "fixture_data.shared_types":
+                    module = ".shared_types"
+                needed_imports.add((module, fixture_type.__name__))
 
         return needed_imports
 
@@ -165,16 +165,7 @@ class FixtureTypeMappingFileGenerator:
         f.writelines(entries)
         f.write("}\n")
 
-    def _generate_init_file(self, generated_dir: Path) -> None:
-        """Generate __init__.py file for the generated fixtures package."""
-        init_path = generated_dir / "__init__.py"
 
-        with init_path.open("w", encoding="utf-8") as f:
-            f.write('"""Generated fixtures for testing."""\n\n')
-            f.write("from .fixture_types import FIXTURE_TYPE_MAPPINGS\n\n")
-            f.write("__all__ = [\n")
-            f.write('    "FIXTURE_TYPE_MAPPINGS",\n')
-            f.write("]\n")
 
     def _format_with_ruff(self, file_path: Path) -> None:
         """Format the generated file with ruff."""
