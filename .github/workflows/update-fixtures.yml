@@ -139,11 +139,24 @@ jobs:
 
             The fixtures have been automatically updated and committed to this repository.
 
-            To apply these changes to the Music Assistant server:
+            **Before applying to Music Assistant server:**
 
             1. Review the changes in the [latest commit](https://github.com/${context.repo.owner}/${context.repo.repo}/commits/main)
-            2. If the changes look correct, copy \`fixtures/\` to \`music-assistant/server/tests/providers/nicovideo/fixtures/\`
-            3. Create a PR in the server repository with the updated fixtures
+            2. **Verify locally** - Copy updated fixtures and run tests:
+               \`\`\`bash
+               # Clone this repository if not already done
+               git clone https://github.com/${context.repo.owner}/${context.repo.repo}.git
+               cd ${context.repo.repo}
+               git pull
+
+               # Copy fixtures to Music Assistant server repository
+               cp -r fixtures/* /path/to/music-assistant/server/tests/providers/nicovideo/fixtures/
+
+               # Run tests in the server repository
+               cd /path/to/music-assistant/server
+               pytest tests/providers/nicovideo/ -v
+               \`\`\`
+            3. If all tests pass, create a PR in the server repository with the updated fixtures
 
             **Full Log:** Available as artifact \`fixture-update-log\` in the [workflow run](${runUrl})
             `;
