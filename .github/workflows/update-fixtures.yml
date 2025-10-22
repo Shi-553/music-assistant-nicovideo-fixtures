@@ -44,14 +44,12 @@ jobs:
           path: |
             ~/.cache/pip
             .venv
-          key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/pyproject.toml') }}
+          key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-${{ github.event.repository.name }}-${{ hashFiles('**/pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-
-            ${{ runner.os }}-python-
+            ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-${{ github.event.repository.name }}-
 
       - name: Install dependencies
         run: |
-          rm -rf .venv
           python -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip
