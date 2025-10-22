@@ -43,8 +43,8 @@ jobs:
           pip install --upgrade pip
           # Install dependencies from pyproject.toml
           pip install niconico.py aiohttp pydantic mashumaro
-          # Clone and install Music Assistant
-          git clone --depth 1 https://github.com/music-assistant/server.git /tmp/music-assistant-server
+          # Clone and install Music Assistant from your fork and branch
+          git clone --depth 1 --branch add-niconico-provider https://github.com/Shi-553/server.git /tmp/music-assistant-server
           pip install -e /tmp/music-assistant-server
 
       - name: Update Niconico fixtures
