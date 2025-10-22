@@ -13,9 +13,9 @@ from scripts.constants import (
 )
 
 if TYPE_CHECKING:
-    from music_assistant.providers.nicovideo.services.manager import NicovideoServiceManager
     from niconico import NicoNico
 
+    from music_assistant.providers.nicovideo.services.manager import NicovideoServiceManager
     from scripts.types import FixtureProcessorProtocol
 
 logger = logging.getLogger(__name__)

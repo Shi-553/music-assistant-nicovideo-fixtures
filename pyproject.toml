@@ -18,10 +18,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.13.2",
     "mypy==1.18.2",
     "pre-commit==4.3.0",
     "pre-commit-hooks==6.0.0",
+    "ruff==0.13.2",
 ]
 
 [build-system]
@@ -31,8 +31,64 @@ build-backend = "setuptools.build_meta"
 [tool.ruff]
 fix = true
 show-fixes = true
+
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint.pydocstyle]
+# Use Google-style docstrings.
+convention = "pep257"
+
+[tool.ruff.lint.pylint]
+
+max-args = 10
+max-branches = 25
+max-returns = 15
+max-statements = 50
+
+[tool.mypy]
+platform = "linux"
+python_version = "3.12"
+
+# set this to normal when we have fixed all exclusions
+follow_imports = "silent"
+
+# suppress errors about unsatisfied imports
+ignore_missing_imports = true
+
+# be strict
+check_untyped_defs = true
+disable_error_code = [
+  "annotation-unchecked",
+  "import-not-found",
+  "import-untyped",
+]
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+enable_error_code = [
+  "ignore-without-code",
+  "redundant-self",
+  "truthy-iterable",
+]
+extra_checks = false
+local_partial_types = true
+no_implicit_optional = true
+no_implicit_reexport = true
+packages = ["scripts"]
+show_error_codes = true
+strict_equality = true
+strict_optional = true
+warn_incomplete_stub = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
 
 [tool.ruff.format]
 # Force Linux/macOS line endings
@@ -59,11 +115,9 @@ ignore = [
   "TD003", # Just annoying, not really useful
   "TD004", # Just annoying, not really useful
   "TRY003", # Just annoying, not really useful
-  "TRY300", # Just annoying, not really useful
   "TRY400", # Just annoying, not really useful
   "COM812", # Conflicts with the Ruff formatter
-  "ISC001", # Conflicts with the Ruff formatter
-  # TEMPORARY DISABLED rules
+  "ISC001", # TEMPORARY DISABLED rules  # The below rules must be enabled later one-by-one !
   "BLE001",
   "FBT001",
   "FBT002",
@@ -110,58 +164,32 @@ ignore = [
   "PTH116",
   "DTZ003",
   "RUF012",
+  "S304",
+  "DTZ003",
+  "RET507",
+  "RUF006",
+  "TRY300",
+  "PTH107",
+  "S608",
+  "N818",
+  "S307",
+  "B007",
+  "RUF009",
+  "ANN204",
+  "PTH202",
+  "ASYNC109",
+  "ASYNC110",
+  "A005",
 ]
 
-select = [
-  "ALL",
-]
+select = ["ALL"]
 
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false
 
-[tool.ruff.lint.pydocstyle]
-convention = "pep257"
+[tool.ruff.lint.isort]
+known-first-party = ["music_assistant"]
 
-[tool.ruff.lint.pylint]
-max-args = 10
-max-branches = 25
-max-returns = 15
-max-statements = 50
-
-[tool.mypy]
-platform = "linux"
-python_version = "3.12"
-follow_imports = "silent"
-ignore_missing_imports = true
-check_untyped_defs = true
-disable_error_code = [
-  "annotation-unchecked",
-  "import-not-found",
-  "import-untyped",
-]
-disallow_any_generics = true
-disallow_incomplete_defs = true
-disallow_subclassing_any = true
-disallow_untyped_calls = true
-disallow_untyped_decorators = true
-disallow_untyped_defs = true
-enable_error_code = [
-  "ignore-without-code",
-  "redundant-self",
-  "truthy-iterable",
-]
-extra_checks = false
-local_partial_types = true
-no_implicit_optional = true
-no_implicit_reexport = true
-packages = ["scripts"]
-show_error_codes = true
-strict_equality = true
-strict_optional = true
-warn_incomplete_stub = true
-warn_no_return = true
-warn_redundant_casts = true
-warn_return_any = true
-warn_unreachable = true
-warn_unused_configs = true
-warn_unused_ignores = true
+[tool.ruff.lint.mccabe]
+max-complexity = 25

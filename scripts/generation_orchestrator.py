@@ -9,11 +9,11 @@ from typing import Any, override
 from unittest.mock import Mock
 
 import aiohttp
-from music_assistant.providers.nicovideo.services.manager import NicovideoServiceManager
 from niconico import NicoNico
 from niconico.exceptions import LoginFailureError
 from pydantic import BaseModel, ValidationError
 
+from music_assistant.providers.nicovideo.services.manager import NicovideoServiceManager
 from scripts.api_fixture_collector import APIFixtureCollector
 from scripts.constants import GENERATED_DIR, GENERATED_FIXTURES_DIR
 from scripts.field_stabilizer import FieldStabilizer

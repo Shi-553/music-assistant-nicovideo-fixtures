@@ -6,9 +6,9 @@ import warnings
 from typing import TYPE_CHECKING, TypeVar
 from unittest.mock import Mock
 
-from music_assistant.providers.nicovideo.converters.manager import NicovideoConverterManager
 from pydantic import BaseModel
 
+from music_assistant.providers.nicovideo.converters.manager import NicovideoConverterManager
 from scripts.types import FixtureAPIResult, JsonContainer, JsonDict, JsonList
 
 if TYPE_CHECKING:

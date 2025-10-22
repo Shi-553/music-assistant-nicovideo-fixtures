@@ -1,0 +1,134 @@
+name: Update Niconico Fixtures
+
+on:
+  # Daily execution at 00:00 UTC
+  schedule:
+    - cron: '0 0 * * *'
+
+  # Manual execution
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  update-fixtures:
+    name: Update Niconico Fixtures
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            .venv
+          key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-
+            ${{ runner.os }}-python-
+
+      - name: Install Music Assistant server (editable)
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -e .
+          # Install Music Assistant from the main repository
+          pip install -e git+https://github.com/music-assistant/server.git#egg=music_assistant
+
+      - name: Update Niconico fixtures
+        id: update_fixtures
+        env:
+          NICONICO_SESSION: ${{ secrets.NICONICO_SESSION }}
+        run: |
+          source .venv/bin/activate
+          python scripts/main.py 2>&1 | tee fixture-update.log
+          echo "log_content<<EOF" >> $GITHUB_OUTPUT
+          cat fixture-update.log >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Check for fixture changes
+        id: check_changes
+        run: |
+          if git diff --quiet generated/fixtures/; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No fixture changes detected"
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Fixture changes detected"
+            echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+            git diff --name-only generated/fixtures/ >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add generated/
+          git commit -m "chore: Update Niconico fixtures [automated]"
+          git push
+
+      - name: Create issue for fixture updates
+        if: steps.check_changes.outputs.changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            const changedFiles = `${{ steps.check_changes.outputs.changed_files }}`;
+            const logContent = `${{ steps.update_fixtures.outputs.log_content }}`;
+
+            const issueBody = `## Fixture Update Summary
+
+            **Date:** ${date}
+
+            ### Changed Files
+            \`\`\`
+            ${changedFiles}
+            \`\`\`
+
+            ### Update Log
+            <details>
+            <summary>Click to expand full log</summary>
+
+            \`\`\`
+            ${logContent}
+            \`\`\`
+            </details>
+
+            ### Next Steps
+
+            If these changes look correct, you can copy the updated fixtures to the Music Assistant server repository:
+
+            1. Clone this repository
+            2. Copy \`generated/fixtures/\` to \`music-assistant/server/tests/providers/nicovideo/fixtures/\`
+            3. Create a PR in the server repository
+
+            Or you can review the changes in this repository's commit history.
+            `;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: \`[Automated] Fixture Update - \${date}\`,
+              body: issueBody,
+              labels: ['automated', 'fixture-update']
+            });
+
+      - name: Upload fixture update log
+        if: failure() || steps.check_changes.outputs.changes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixture-update-log
+          path: fixture-update.log
+          retention-days: 30
