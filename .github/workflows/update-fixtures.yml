@@ -46,15 +46,11 @@ jobs:
           pip install -e git+https://github.com/music-assistant/server.git#egg=music_assistant
 
       - name: Update Niconico fixtures
-        id: update_fixtures
         env:
           NICONICO_SESSION: ${{ secrets.NICONICO_SESSION }}
         run: |
           source .venv/bin/activate
           python scripts/main.py 2>&1 | tee fixture-update.log
-          echo "log_content<<EOF" >> $GITHUB_OUTPUT
-          cat fixture-update.log >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Check for fixture changes
         id: check_changes
@@ -65,9 +61,8 @@ jobs:
           else
             echo "changes=true" >> $GITHUB_OUTPUT
             echo "Fixture changes detected"
-            echo "changed_files<<EOF" >> $GITHUB_OUTPUT
-            git diff --name-only generated/fixtures/ >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            git diff --name-only generated/fixtures/ > changed-files.txt
+            echo "file_count=$(git diff --name-only generated/fixtures/ | wc -l)" >> $GITHUB_OUTPUT
           fi
 
       - name: Commit and push changes
@@ -85,42 +80,33 @@ jobs:
         with:
           script: |
             const date = new Date().toISOString().split('T')[0];
-            const changedFiles = `${{ steps.check_changes.outputs.changed_files }}`;
-            const logContent = `${{ steps.update_fixtures.outputs.log_content }}`;
+            const fileCount = '${{ steps.check_changes.outputs.file_count }}';
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
 
             const issueBody = `## Fixture Update Summary
 
             **Date:** ${date}
-
-            ### Changed Files
-            \`\`\`
-            ${changedFiles}
-            \`\`\`
-
-            ### Update Log
-            <details>
-            <summary>Click to expand full log</summary>
-
-            \`\`\`
-            ${logContent}
-            \`\`\`
-            </details>
+            **Changed Files:** ${fileCount}
+            **Workflow Run:** [View Details](${runUrl})
 
             ### Next Steps
 
-            If these changes look correct, you can copy the updated fixtures to the Music Assistant server repository:
+            The fixtures have been automatically updated and committed to this repository.
 
-            1. Clone this repository
-            2. Copy \`generated/fixtures/\` to \`music-assistant/server/tests/providers/nicovideo/fixtures/\`
-            3. Create a PR in the server repository
+            To apply these changes to the Music Assistant server:
 
-            Or you can review the changes in this repository's commit history.
+            1. Review the changes in the [latest commit](https://github.com/${context.repo.owner}/${context.repo.repo}/commits/main)
+            2. Download the artifact from the [workflow run](${runUrl}) to see the full update log
+            3. If the changes look correct, copy \`generated/fixtures/\` to \`music-assistant/server/tests/providers/nicovideo/fixtures/\`
+            4. Create a PR in the server repository with the updated fixtures
+
+            **Artifact:** The full update log is available as an artifact named \`fixture-update-log\` in the workflow run.
             `;
 
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: \`[Automated] Fixture Update - \${date}\`,
+              title: `[Automated] Fixture Update - ${date}`,
               body: issueBody,
               labels: ['automated', 'fixture-update']
             });
