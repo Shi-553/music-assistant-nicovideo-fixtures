@@ -4,21 +4,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from niconico.objects.video.watch import WatchData
-from niconico.objects.nvapi import LikeHistoryData
-from music_assistant.providers.nicovideo.converters.stream import StreamConversionData
-from niconico.objects.nvapi import OwnVideosData
-from niconico.objects.nvapi import HistoryData
-from niconico.objects.nvapi import VideoSearchData
-from niconico.objects.video import Mylist
-from niconico.objects.nvapi import SeriesData
-from niconico.objects.user import UserSeriesItem
-from niconico.objects.user import UserMylistItem
-from niconico.objects.nvapi import ListSearchData
-from niconico.objects.nvapi import RelationshipUsersData
 from niconico.objects.user import NicoUser
+from niconico.objects.nvapi import SeriesData
+from niconico.objects.nvapi import VideoSearchData
 from niconico.objects.nvapi import FollowingMylistsData
+from niconico.objects.nvapi import RelationshipUsersData
+from niconico.objects.video import Mylist
+from music_assistant.providers.nicovideo.converters.stream import StreamConversionData
+from niconico.objects.video.watch import WatchData
+from niconico.objects.nvapi import OwnVideosData
+from niconico.objects.nvapi import ListSearchData
 from niconico.objects.nvapi import UserVideosData
+from niconico.objects.user import UserMylistItem
+from niconico.objects.nvapi import LikeHistoryData
+from niconico.objects.nvapi import HistoryData
+from niconico.objects.user import UserSeriesItem
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
