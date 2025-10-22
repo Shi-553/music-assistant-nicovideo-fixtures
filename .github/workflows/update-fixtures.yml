@@ -11,6 +11,10 @@ on:
 env:
   PYTHON_VERSION: "3.12"
 
+permissions:
+  contents: write  # Allow git push
+  issues: write    # Allow creating issues
+
 jobs:
   update-fixtures:
     name: Update Niconico Fixtures
