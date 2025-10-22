@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, TextIO
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
-    from scripts.types import FixtureAPIResult
+    from fixture_generator.types import FixtureAPIResult
 
 logger = logging.getLogger(__name__)
 
@@ -164,8 +164,6 @@ class FixtureTypeMappingFileGenerator:
 
         f.writelines(entries)
         f.write("}\n")
-
-
 
     def _format_with_ruff(self, file_path: Path) -> None:
         """Format the generated file with ruff."""

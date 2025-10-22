@@ -11,16 +11,16 @@ from niconico import NicoNico
 from niconico.exceptions import LoginFailureError
 from pydantic import BaseModel, ValidationError
 
-from scripts.api_fixture_collector import APIFixtureCollector
-from scripts.constants import GENERATED_FIXTURE_TYPES_PATH, GENERATED_FIXTURES_DIR
-from scripts.field_stabilizer import FieldStabilizer
-from scripts.fixture_saver import FixtureSaver
-from scripts.fixture_type_mapping import (
+from fixture_generator.api_fixture_collector import APIFixtureCollector
+from fixture_generator.constants import GENERATED_FIXTURE_TYPES_PATH, GENERATED_FIXTURES_DIR
+from fixture_generator.field_stabilizer import FieldStabilizer
+from fixture_generator.fixture_saver import FixtureSaver
+from fixture_generator.fixture_type_mapping import (
     FixtureTypeMappingCollector,
     FixtureTypeMappingFileGenerator,
 )
-from scripts.helpers import to_dict_for_fixture
-from scripts.types import (
+from fixture_generator.helpers import to_dict_for_fixture
+from fixture_generator.types import (
     FixtureAPIResultOptional,
     FixtureCategory,
     FixtureProcessorProtocol,

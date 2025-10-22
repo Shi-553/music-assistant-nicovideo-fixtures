@@ -6,8 +6,8 @@ import json
 import logging
 from pathlib import Path
 
-from scripts.diff_tracker import FixtureDiffTracker
-from scripts.types import JsonContainer
+from fixture_generator.diff_tracker import FixtureDiffTracker
+from fixture_generator.types import JsonContainer
 
 logger = logging.getLogger(__name__)
 

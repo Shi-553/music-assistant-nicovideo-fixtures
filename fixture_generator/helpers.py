@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from pydantic import BaseModel
 
-from scripts.types import FixtureAPIResult, JsonContainer, JsonDict, JsonList
+from fixture_generator.types import FixtureAPIResult, JsonContainer, JsonDict, JsonList
 
 if TYPE_CHECKING:
     from mashumaro import DataClassDictMixin
