@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+from fixture_data.types import StreamFixtureData
 from scripts.constants import (
     SAMPLE_MYLIST_ID,
     SAMPLE_SERIES_ID,
@@ -15,7 +16,6 @@ from scripts.constants import (
 if TYPE_CHECKING:
     from niconico import NicoNico
 
-    from music_assistant.providers.nicovideo.services.manager import NicovideoServiceManager
     from scripts.types import FixtureProcessorProtocol
 
 logger = logging.getLogger(__name__)
@@ -28,13 +28,11 @@ class APIFixtureCollector:
         self,
         fixture_processor: FixtureProcessorProtocol,
         client: NicoNico,
-        service_manager: NicovideoServiceManager,
         limit: int = 1,
     ) -> None:
         """Initialize with fixture saver dependency and data limit for API responses."""
         self.fixture_processor = fixture_processor
         self.client = client
-        self.service_manager = service_manager
         self.limit = limit
 
     async def collect_tracks_fixtures(
@@ -230,14 +228,32 @@ class APIFixtureCollector:
         """Collect STREAM category fixtures."""
         logger.info("=== Collecting STREAM fixtures ===")
 
-        # Stream details
-        # Note: Using private method for test fixture generation
-        # to obtain StreamConversionData directly
+        # Get watch data
+        watch_data_result = self.client.video.watch.get_watch_data(SAMPLE_VIDEO_ID)
+
+        # Select best audio (same logic as server-side _select_best_audio)
+        best_audio = None
+        best_quality = -1
+        for audio in watch_data_result.media.domand.audios:
+            if audio.is_available and audio.quality_level > best_quality:
+                best_audio = audio
+                best_quality = audio.quality_level
+
+        if not best_audio:
+            logger.warning("No available audio found for stream fixture")
+            return
+
+        # Create StreamFixtureData structure
+        stream_fixture = StreamFixtureData(
+            watch_data=watch_data_result,
+            selected_audio=best_audio,
+        )
+
+        # Save as fixture
         await self.fixture_processor.process_fixture(
             "stream",
             "stream_data",
-            self.service_manager.video._prepare_conversion_data,
-            SAMPLE_VIDEO_ID,
+            lambda: stream_fixture,  # Return the constructed StreamFixtureData
         )
 
     async def collect_all_fixtures(

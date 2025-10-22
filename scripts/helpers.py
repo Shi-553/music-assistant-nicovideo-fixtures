@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import warnings
 from typing import TYPE_CHECKING, TypeVar
-from unittest.mock import Mock
 
 from pydantic import BaseModel
 
-from music_assistant.providers.nicovideo.converters.manager import NicovideoConverterManager
 from scripts.types import FixtureAPIResult, JsonContainer, JsonDict, JsonList
 
 if TYPE_CHECKING:
@@ -16,20 +14,6 @@ if TYPE_CHECKING:
     from pydantic import JsonValue
 
 T = TypeVar("T")
-
-
-def create_converter_manager() -> NicovideoConverterManager:
-    """Create a NicovideoConverterManager for testing."""
-    # Create mock provider
-    mock_provider = Mock()
-    mock_provider.lookup_key = "nicovideo"
-    mock_provider.instance_id = "nicovideo_test"
-    mock_provider.domain = "nicovideo"
-
-    # Create mock logger
-    mock_logger = Mock()
-
-    return NicovideoConverterManager(mock_provider, mock_logger)
 
 
 def sort_dict_keys_and_lists(obj: JsonValue) -> JsonValue:

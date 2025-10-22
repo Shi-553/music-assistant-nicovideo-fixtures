@@ -127,7 +127,7 @@ class FixtureTypeMappingFileGenerator:
                 and isinstance(fixture_type, type)
                 and (
                     fixture_type.__module__.startswith("niconico.")
-                    or fixture_type.__module__.startswith("music_assistant.providers.nicovideo")
+                    or fixture_type.__module__.startswith("fixture_data.")
                 )
             ):
                 needed_imports.add((fixture_type.__module__, fixture_type.__name__))

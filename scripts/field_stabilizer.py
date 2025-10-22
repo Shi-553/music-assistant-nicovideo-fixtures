@@ -5,8 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from music_assistant.providers.nicovideo.constants import DOMAND_BID_COOKIE_NAME
-
 if TYPE_CHECKING:
     from pydantic import BaseModel, JsonValue
 
@@ -14,6 +12,7 @@ if TYPE_CHECKING:
 
 # Stabilization constants
 DUMMY_COUNT = 1
+DOMAND_BID_COOKIE_NAME = "domand_bid"
 
 
 @dataclass(frozen=True)

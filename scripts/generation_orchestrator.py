@@ -6,16 +6,13 @@ import asyncio
 import logging
 from collections.abc import Callable, Coroutine
 from typing import Any, override
-from unittest.mock import Mock
 
-import aiohttp
 from niconico import NicoNico
 from niconico.exceptions import LoginFailureError
 from pydantic import BaseModel, ValidationError
 
-from music_assistant.providers.nicovideo.services.manager import NicovideoServiceManager
 from scripts.api_fixture_collector import APIFixtureCollector
-from scripts.constants import GENERATED_DIR, GENERATED_FIXTURES_DIR
+from scripts.constants import GENERATED_FIXTURE_TYPES_PATH, GENERATED_FIXTURES_DIR
 from scripts.field_stabilizer import FieldStabilizer
 from scripts.fixture_saver import FixtureSaver
 from scripts.fixture_type_mapping import (
@@ -126,29 +123,14 @@ class FixtureGenerationOrchestrator(FixtureProcessorProtocol):
 
             logger.info("=== Collecting nicovideo fixtures ===")
 
-            # Create a mock provider with real http_session
-            mock_provider = Mock()
-            mock_mass = Mock()
-            mock_logger = Mock()
-
-            # Create real aiohttp session for http requests
-            async with aiohttp.ClientSession() as session:
-                mock_mass.http_session = session
-                mock_provider.mass = mock_mass
-                mock_provider.logger = mock_logger
-
-                service_manager = NicovideoServiceManager(mock_provider, Mock())
-                # Override the niconico_py_client with the authenticated client
-                service_manager.niconico_py_client = client
-
-                api_collector = APIFixtureCollector(self, client, service_manager, limit=self.limit)
-                await api_collector.collect_all_fixtures()
+            api_collector = APIFixtureCollector(self, client, limit=self.limit)
+            await api_collector.collect_all_fixtures()
 
             logger.info("=== Generating fixture types file ===")
             generator = FixtureTypeMappingFileGenerator(
                 self.type_mapping_collector.get_all_mappings()
             )
-            generator.generate_file(GENERATED_DIR / "fixture_types.py")
+            generator.generate_file(GENERATED_FIXTURE_TYPES_PATH)
 
             logger.info("=== All fixtures collected successfully! ===")
 

@@ -6,9 +6,10 @@ import pathlib
 
 # Test fixtures directories
 _BASE_DIR = pathlib.Path(__file__).parent.parent
-GENERATED_DIR = _BASE_DIR
+FIXTURE_DATA_DIR = _BASE_DIR / "fixture_data"
+GENERATED_DIR = FIXTURE_DATA_DIR / "generated"
 GENERATED_FIXTURES_DIR = GENERATED_DIR / "fixtures"
-GENERATED_SNAPSHOTS_DIR = GENERATED_DIR / "snapshots"
+GENERATED_FIXTURE_TYPES_PATH = GENERATED_DIR / "fixture_types.py"
 
 # Sample test data IDs
 SAMPLE_VIDEO_ID = "sm45285955"
