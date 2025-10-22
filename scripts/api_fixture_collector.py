@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from fixture_data.types import StreamFixtureData
+from fixture_data.shared_types import StreamFixtureData
 from scripts.constants import (
     SAMPLE_MYLIST_ID,
     SAMPLE_SERIES_ID,

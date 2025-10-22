@@ -80,21 +80,21 @@ class FixtureTypeMappingCollector:
 
 
 class FixtureTypeMappingFileGenerator:
-    """Generates fixture_types.py file from collected mappings."""
+    """Generates fixture_type_mappings.py file from collected mappings."""
 
-    def __init__(self, mappings: dict[str, type[BaseModel]]) -> None:
-        """Initialize with type mappings.
+    def __init__(self, mappings: dict[str, type]) -> None:
+        """Initialize the generator with mappings.
 
         Args:
-            mappings: Dictionary of path -> type mappings
+            mappings: Dictionary mapping fixture paths to their types
         """
         self.mappings = mappings
 
     def generate_file(self, output_path: Path) -> None:
-        """Generate the fixture_types.py file.
+        """Generate the fixture_type_mappings.py file.
 
         Args:
-            output_path: Path to the generated fixture_types.py file
+            output_path: Path to the generated fixture_type_mappings.py file
         """
         # Collect imports
         imports = self._collect_imports()
