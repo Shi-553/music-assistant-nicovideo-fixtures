@@ -176,23 +176,6 @@ class FixtureTypeMappingFileGenerator:
             f.write('    "FIXTURE_TYPE_MAPPINGS",\n')
             f.write("]\n")
 
-    def _find_server_root(self) -> Path:
-        """Find server root directory by looking for tests directory."""
-        current = Path(__file__).parent
-
-        # Step 1: Look for tests directory
-        while current != current.parent:  # Until we reach filesystem root
-            if current.name == "tests":
-                server_root = current.parent
-
-                # Step 2: Verify it's actually server root (check for pyproject.toml)
-                if (server_root / "pyproject.toml").exists():
-                    return server_root
-
-            current = current.parent
-
-        raise RuntimeError("Could not find server root directory (tests directory not found)")
-
     def _format_with_ruff(self, file_path: Path) -> None:
         """Format the generated file with ruff."""
         try:
