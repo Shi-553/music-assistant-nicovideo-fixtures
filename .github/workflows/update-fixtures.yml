@@ -55,7 +55,10 @@ jobs:
       - name: Check for fixture changes
         id: check_changes
         run: |
-          if git diff --quiet generated/fixtures/; then
+          if [ ! -d "generated/fixtures" ]; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No generated fixtures directory found"
+          elif git diff --quiet generated/fixtures/; then
             echo "changes=false" >> $GITHUB_OUTPUT
             echo "No fixture changes detected"
           else
