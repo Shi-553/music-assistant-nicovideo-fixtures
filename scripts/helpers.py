@@ -6,9 +6,9 @@ import warnings
 from typing import TYPE_CHECKING, TypeVar
 from unittest.mock import Mock
 
+from music_assistant.providers.nicovideo.converters.manager import NicovideoConverterManager
 from pydantic import BaseModel
 
-from music_assistant.providers.nicovideo.converters.manager import NicovideoConverterManager
 from scripts.types import FixtureAPIResult, JsonContainer, JsonDict, JsonList
 
 if TYPE_CHECKING:
@@ -45,7 +45,7 @@ def sort_dict_keys_and_lists(obj: JsonValue) -> JsonValue:
     if isinstance(obj, dict):
         # Sort dictionary keys and recursively process values
         return {key: sort_dict_keys_and_lists(obj[key]) for key in sorted(obj.keys())}
-    elif isinstance(obj, list):
+    if isinstance(obj, list):
         # Recursively process list items first
         sorted_items = [sort_dict_keys_and_lists(item) for item in obj]
         try:
@@ -70,25 +70,8 @@ def to_dict_for_snapshot(media_item: DataClassDictMixin) -> JsonDict:
     # Ensure we return the expected dict type
     if isinstance(sorted_result, dict):
         return sorted_result
-    else:
-        # This should not happen given the input, but satisfies mypy
-        return item_dict
-
-
-def to_dict_for_snapshot(media_item: DataClassDictMixin) -> JsonDict:
-    """Convert DataClassDictMixin to dict with sorted keys and lists for snapshot comparison."""
-    # Get the standard to_dict representation
-    item_dict = media_item.to_dict()
-
-    # Recursively sort all nested structures, especially sets
-    sorted_result = sort_dict_keys_and_lists(item_dict)
-
-    # Ensure we return the expected dict type
-    if isinstance(sorted_result, dict):
-        return sorted_result
-    else:
-        # This should not happen given the input, but satisfies mypy
-        return item_dict
+    # This should not happen given the input, but satisfies mypy
+    return item_dict
 
 
 def to_dict_for_fixture[T: BaseModel](response: FixtureAPIResult[T]) -> JsonContainer:

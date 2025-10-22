@@ -106,11 +106,11 @@ class FieldStabilizer:
         # 2. Handle nested structures
         if isinstance(value, dict):
             return self._stabilize_dict(value, is_in_count_context)
-        elif isinstance(value, list):
+        if isinstance(value, list):
             return [self._stabilize_value(key, item, is_in_count_context) for item in value]
 
         # 3. Handle count values
-        elif is_in_count_context and isinstance(value, (int, float)):
+        if is_in_count_context and isinstance(value, (int, float)):
             return DUMMY_COUNT
 
         return value
