@@ -75,10 +75,10 @@ enable_error_code = [
   "truthy-iterable",
 ]
 extra_checks = false
+explicit_package_bases = true
 local_partial_types = true
 no_implicit_optional = true
 no_implicit_reexport = true
-packages = ["scripts"]
 show_error_codes = true
 strict_equality = true
 strict_optional = true

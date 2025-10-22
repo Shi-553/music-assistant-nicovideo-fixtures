@@ -196,21 +196,19 @@ class FixtureTypeMappingFileGenerator:
     def _format_with_ruff(self, file_path: Path) -> None:
         """Format the generated file with ruff."""
         try:
-            # Find server root reliably
-            server_root = self._find_server_root()
-            ruff_path = server_root / ".venv" / "bin" / "ruff"
+            # Use ruff from this repository's venv
+            fixtures_root = Path(__file__).parent.parent  # music-assistant-nicovideo-fixtures root
+            ruff_path = fixtures_root / ".venv" / "bin" / "ruff"
 
             subprocess.run(  # noqa: S603
                 [str(ruff_path), "check", "--fix", str(file_path)],
                 check=True,
                 capture_output=True,
                 text=True,
-                cwd=server_root,
+                cwd=fixtures_root,
             )
             logger.info(f"Formatted {file_path} with ruff")
         except subprocess.CalledProcessError as e:
             logger.warning(f"Failed to format {file_path} with ruff: {e.stderr}")
-        except (FileNotFoundError, RuntimeError) as e:
-            logger.warning(
-                f"ruff command not found or server root not found: {e}, skipping formatting"
-            )
+        except FileNotFoundError as e:
+            logger.warning(f"ruff command not found: {e}, skipping formatting")
