@@ -36,20 +36,23 @@ jobs:
             ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-
             ${{ runner.os }}-python-
 
-      - name: Install Music Assistant server (editable)
+      - name: Install dependencies
         run: |
           python -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip
-          pip install -e .
-          # Install Music Assistant from the main repository
-          pip install -e git+https://github.com/music-assistant/server.git#egg=music_assistant
+          # Install dependencies from pyproject.toml
+          pip install niconico.py aiohttp pydantic mashumaro
+          # Clone and install Music Assistant
+          git clone --depth 1 https://github.com/music-assistant/server.git /tmp/music-assistant-server
+          pip install -e /tmp/music-assistant-server
 
       - name: Update Niconico fixtures
         env:
           NICONICO_SESSION: ${{ secrets.NICONICO_SESSION }}
         run: |
           source .venv/bin/activate
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
           python scripts/main.py 2>&1 | tee fixture-update.log
 
       - name: Check for fixture changes
