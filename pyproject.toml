@@ -1,0 +1,45 @@
+[project]
+name = "music-assistant-nicovideo-fixtures"
+version = "0.1.0"
+description = "Fixture generation and maintenance tools for Music Assistant's Niconico provider"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Shi-553" }
+]
+
+dependencies = [
+    "niconico.py @ git+https://github.com/Shi-553/niconico.py@main",
+    "aiohttp>=3.10.11",
+    "pydantic>=2.10.3",
+    "mashumaro>=3.14",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.4",
+    "mypy>=1.13.0",
+]
+
+[build-system]
+requires = ["setuptools>=75.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "C90", "I", "N", "UP", "ANN", "S", "B", "A", "COM", "C4", "DTZ", "T10", "ISC", "ICN", "PIE", "PT", "Q", "RSE", "RET", "SLF", "SIM", "TID", "TCH", "ARG", "PTH", "ERA", "PD", "PGH", "PL", "TRY", "FLY", "PERF", "RUF"]
+ignore = ["ANN101", "ANN102", "COM812", "ISC001", "S101", "TRY003"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
