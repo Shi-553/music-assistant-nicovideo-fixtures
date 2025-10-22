@@ -80,15 +80,11 @@ jobs:
             fi
           fi
 
-      - name: Commit and push changes
-        if: steps.check_changes.outputs.changes == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          # Files are already staged in the check step
-          git commit -m "chore: Update Niconico fixtures [automated]"
-          git push
-
+            # Push changes
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "Update fixtures: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            git push
       - name: Create issue for fixture updates
         if: steps.check_changes.outputs.changes == 'true'
         uses: actions/github-script@v7
@@ -157,8 +153,6 @@ jobs:
                pytest tests/providers/nicovideo/ -v
                \`\`\`
             3. If all tests pass, create a PR in the server repository with the updated fixtures
-
-            **Full Log:** Available as artifact \`fixture-update-log\` in the [workflow run](${runUrl})
             `;
 
             await github.rest.issues.create({
@@ -168,11 +162,3 @@ jobs:
               body: issueBody,
               labels: ['automated', 'fixture-update']
             });
-
-      - name: Upload fixture update log
-        if: failure() || steps.check_changes.outputs.changes == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: fixture-update-log
-          path: fixture-update.log
-          retention-days: 30
