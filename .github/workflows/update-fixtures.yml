@@ -51,7 +51,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv .venv
+          python -m venv --copies .venv
           source .venv/bin/activate
           pip install --upgrade pip
           # Install this package with dev dependencies
