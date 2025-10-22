@@ -61,14 +61,18 @@ jobs:
           if [ ! -d "fixtures" ]; then
             echo "changes=false" >> $GITHUB_OUTPUT
             echo "No fixtures directory found"
-          elif git diff --quiet fixtures/; then
-            echo "changes=false" >> $GITHUB_OUTPUT
-            echo "No fixture changes detected"
           else
-            echo "changes=true" >> $GITHUB_OUTPUT
-            echo "Fixture changes detected"
-            git diff --name-only fixtures/ > changed-files.txt
-            echo "file_count=$(git diff --name-only fixtures/ | wc -l)" >> $GITHUB_OUTPUT
+            # Add all files to staging to detect new files
+            git add fixtures/ fixture_types.py __init__.py 2>/dev/null || true
+            if git diff --cached --quiet; then
+              echo "changes=false" >> $GITHUB_OUTPUT
+              echo "No fixture changes detected"
+            else
+              echo "changes=true" >> $GITHUB_OUTPUT
+              echo "Fixture changes detected"
+              git diff --cached --name-only > changed-files.txt
+              echo "file_count=$(git diff --cached --name-only | wc -l)" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Commit and push changes
@@ -76,7 +80,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add fixtures/ fixture_types.py __init__.py
+          # Files are already staged in the check step
           git commit -m "chore: Update Niconico fixtures [automated]"
           git push
 
