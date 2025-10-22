@@ -1,5 +1,5 @@
 [project]
-name = "music-assistant-nicovideo-fixtures"
+name = "music_assistant_nicovideo_fixtures"
 version = "0.1.0"
 description = "Fixture generation and maintenance tools for Music Assistant's Niconico provider"
 readme = "README.md"
@@ -180,7 +180,6 @@ ignore = [
   "ASYNC109",
   "ASYNC110",
   "A005",
-  "N999", # Invalid module name (repository name contains hyphens)
 ]
 
 select = ["ALL"]
