@@ -117,21 +117,13 @@ class FixtureTypeMappingFileGenerator:
         needed_imports = set()
 
         for fixture_type in self.mappings.values():
-            # Collect import information for fixture_type
-            if (
-                fixture_type
-                and isinstance(fixture_type, type)
-                and (
-                    fixture_type.__module__.startswith("niconico.")
-                    or fixture_type.__module__.startswith("fixture_data.")
-                    or fixture_type.__module__.startswith("src.fixture_data.")
-                )
-            ):
+            if fixture_type and isinstance(fixture_type, type):
                 module = fixture_type.__module__
-                # Use relative import for shared_types in same package
-                if module in ("fixture_data.shared_types", "src.fixture_data.shared_types"):
-                    module = "src.fixture_data.shared_types"
-                needed_imports.add((module, fixture_type.__name__))
+
+                # Simple rule: Include all types that are not from built-in/standard library
+                # This automatically handles external libraries and local project modules
+                if not module.startswith(("builtins", "__", "typing")):
+                    needed_imports.add((module, fixture_type.__name__))
 
         return needed_imports
 
