@@ -124,12 +124,13 @@ class FixtureTypeMappingFileGenerator:
                 and (
                     fixture_type.__module__.startswith("niconico.")
                     or fixture_type.__module__.startswith("fixture_data.")
+                    or fixture_type.__module__.startswith("src.fixture_data.")
                 )
             ):
                 module = fixture_type.__module__
                 # Use relative import for shared_types in same package
-                if module == "fixture_data.shared_types":
-                    module = ".shared_types"
+                if module in ("fixture_data.shared_types", "src.fixture_data.shared_types"):
+                    module = "src.fixture_data.shared_types"
                 needed_imports.add((module, fixture_type.__name__))
 
         return needed_imports
