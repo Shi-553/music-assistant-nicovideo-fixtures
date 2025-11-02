@@ -16,7 +16,7 @@ from src.fixture_generator.constants import (
 if TYPE_CHECKING:
     from niconico import NicoNico
 
-    from src.fixture_generator.types import FixtureProcessorProtocol
+    from src.fixture_generator.fixture_types import FixtureProcessorProtocol
 
 logger = logging.getLogger(__name__)
 

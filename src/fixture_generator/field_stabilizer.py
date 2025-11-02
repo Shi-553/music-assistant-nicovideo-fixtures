@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pydantic import BaseModel, JsonValue
 
-    from src.fixture_generator.types import FixtureAPIResult, JsonDict
+    from src.fixture_generator.fixture_types import FixtureAPIResult, JsonDict
 
 # Stabilization constants
 DUMMY_COUNT = 1

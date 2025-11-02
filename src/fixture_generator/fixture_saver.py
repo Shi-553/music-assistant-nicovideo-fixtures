@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 from src.fixture_generator.diff_tracker import FixtureDiffTracker
-from src.fixture_generator.types import JsonContainer
+from src.fixture_generator.fixture_types import JsonContainer
 
 logger = logging.getLogger(__name__)
 

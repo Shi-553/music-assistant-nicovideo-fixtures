@@ -19,12 +19,12 @@ from src.fixture_generator.fixture_type_mapping import (
     FixtureTypeMappingCollector,
     FixtureTypeMappingFileGenerator,
 )
-from src.fixture_generator.helpers import to_dict_for_fixture
-from src.fixture_generator.types import (
+from src.fixture_generator.fixture_types import (
     FixtureAPIResultOptional,
     FixtureCategory,
     FixtureProcessorProtocol,
 )
+from src.fixture_generator.helpers import to_dict_for_fixture
 
 logger = logging.getLogger(__name__)
 
