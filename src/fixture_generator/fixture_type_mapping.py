@@ -123,7 +123,14 @@ class FixtureTypeMappingFileGenerator:
                 # Simple rule: Include all types that are not from built-in/standard library
                 # This automatically handles external libraries and local project modules
                 if not module.startswith(("builtins", "__", "typing")):
-                    needed_imports.add((module, fixture_type.__name__))
+                    # Convert src.fixture_data modules to relative imports
+                    # since the generated file will be copied to server project
+                    if module.startswith("src.fixture_data."):
+                        # Convert src.fixture_data.shared_types -> .shared_types
+                        relative_module = module.replace("src.fixture_data.", ".")
+                        needed_imports.add((relative_module, fixture_type.__name__))
+                    else:
+                        needed_imports.add((module, fixture_type.__name__))
 
         return needed_imports
 
