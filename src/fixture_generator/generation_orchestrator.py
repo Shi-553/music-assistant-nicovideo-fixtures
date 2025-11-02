@@ -15,16 +15,16 @@ from src.fixture_generator.api_fixture_collector import APIFixtureCollector
 from src.fixture_generator.constants import GENERATED_FIXTURE_TYPES_PATH, GENERATED_FIXTURES_DIR
 from src.fixture_generator.field_stabilizer import FieldStabilizer
 from src.fixture_generator.fixture_saver import FixtureSaver
-from src.fixture_generator.fixture_type_mapping import (
-    FixtureTypeMappingCollector,
-    FixtureTypeMappingFileGenerator,
-)
 from src.fixture_generator.fixture_types import (
     FixtureAPIResultOptional,
     FixtureCategory,
     FixtureProcessorProtocol,
 )
 from src.fixture_generator.helpers import to_dict_for_fixture
+from src.fixture_generator.type_mapping_generator import (
+    FixtureTypeMappingCollector,
+    FixtureTypeMappingFileGenerator,
+)
 
 logger = logging.getLogger(__name__)
 

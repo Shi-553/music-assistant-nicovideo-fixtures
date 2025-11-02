@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import logging
+import subprocess
 import warnings
+from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
 from pydantic import BaseModel
@@ -13,7 +16,72 @@ if TYPE_CHECKING:
     from mashumaro import DataClassDictMixin
     from pydantic import JsonValue
 
+logger = logging.getLogger(__name__)
+
 T = TypeVar("T")
+
+
+def find_project_root(start_path: Path | None = None) -> Path | None:
+    """Find project root by looking for pyproject.toml.
+
+    Args:
+        start_path: Starting path to search from. If None, uses the caller's file location.
+
+    Returns:
+        Path to project root, or None if not found.
+    """
+    if start_path is None:
+        start_path = Path(__file__).resolve()
+
+    current = start_path if start_path.is_dir() else start_path.parent
+
+    for parent in [current, *current.parents]:
+        if (parent / "pyproject.toml").exists():
+            return parent
+
+    return None
+
+
+def format_file_with_ruff(file_path: Path) -> bool:
+    """Format a file with ruff (check and format).
+
+    Args:
+        file_path: Path to the file to format
+
+    Returns:
+        True if formatting succeeded, False otherwise
+    """
+    project_root = find_project_root()
+
+    if not project_root:
+        logger.warning("Could not find project root (pyproject.toml), skipping ruff formatting")
+        return False
+
+    ruff_path = project_root / ".venv" / "bin" / "ruff"
+
+    if not ruff_path.exists():
+        logger.warning(f"ruff not found at {ruff_path}, skipping formatting")
+        return False
+
+    try:
+        # Run ruff check --fix for linting fixes
+        subprocess.run(  # noqa: S603
+            [str(ruff_path), "check", "--fix", str(file_path)],
+            check=True,
+            capture_output=True,
+            text=True,
+            cwd=project_root,
+        )
+
+        logger.info(f"Formatted {file_path} with ruff")
+        return True
+
+    except subprocess.CalledProcessError as e:
+        logger.warning(f"Failed to format {file_path} with ruff: {e.stderr}")
+        return False
+    except FileNotFoundError as e:
+        logger.warning(f"ruff command not found: {e}, skipping formatting")
+        return False
 
 
 def sort_dict_keys_and_lists(obj: JsonValue) -> JsonValue:

@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import logging
-import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, TextIO
 
 from pydantic import BaseModel
+
+from src.fixture_generator.helpers import format_file_with_ruff
 
 if TYPE_CHECKING:
     from src.fixture_generator.fixture_types import FixtureAPIResult
@@ -89,6 +90,48 @@ class FixtureTypeMappingFileGenerator:
             mappings: Dictionary mapping fixture paths to their types
         """
         self.mappings = mappings
+        # Detect the base package by finding the root package of current file
+        self._base_package = self._detect_base_package()
+        self._target_package_prefix: str | None = None
+
+    def _detect_base_package(self) -> str:
+        """Detect the base package name from current file location.
+
+        Returns the top-level package name (e.g., 'src' from 'src.fixture_generator.xxx').
+        """
+        current_module = self.__class__.__module__
+        # Get the first component of the module path
+        return current_module.split(".", 1)[0]
+
+    def _detect_target_package_from_path(self, output_path: Path) -> str:
+        """Detect target package prefix from output file path.
+
+        Args:
+            output_path: Path where the file will be generated
+
+        Returns:
+            Package prefix (e.g., 'src.fixture_data' from 'src/fixture_data/file.py')
+
+        Raises:
+            ValueError: If target package cannot be detected from output path
+        """
+        # Find the package path relative to project root
+        # Walk up from current file to find project root (where src/ exists)
+        current_file = Path(__file__)
+        for parent in current_file.parents:
+            if (parent / self._base_package).is_dir():
+                # Found project root, now calculate relative path
+                try:
+                    rel_path = output_path.parent.relative_to(parent)
+                    # Convert path to module notation
+                    return str(rel_path).replace("/", ".")
+                except ValueError:
+                    # output_path is not relative to this parent
+                    continue
+
+        # Could not detect target package
+        msg = f"Failed to detect target package from output path: {output_path}"
+        raise ValueError(msg)
 
     def generate_file(self, output_path: Path) -> None:
         """Generate the fixture_type_mappings.py file.
@@ -96,6 +139,9 @@ class FixtureTypeMappingFileGenerator:
         Args:
             output_path: Path to the generated fixture_type_mappings.py file
         """
+        # Detect target package from output path
+        self._target_package_prefix = self._detect_target_package_from_path(output_path)
+
         # Collect imports
         imports = self._collect_imports()
 
@@ -110,7 +156,7 @@ class FixtureTypeMappingFileGenerator:
         logger.info("Note: Run 'ruff check --fix' to format the generated files")
 
         # Format with ruff
-        self._format_with_ruff(output_path)
+        format_file_with_ruff(output_path)
 
     def _collect_imports(self) -> set[tuple[str, str]]:
         """Collect all required imports from fixture mappings."""
@@ -123,11 +169,13 @@ class FixtureTypeMappingFileGenerator:
                 # Simple rule: Include all types that are not from built-in/standard library
                 # This automatically handles external libraries and local project modules
                 if not module.startswith(("builtins", "__", "typing")):
-                    # Convert src.fixture_data modules to relative imports
+                    # Convert modules from same package tree to relative imports
                     # since the generated file will be copied to server project
-                    if module.startswith("src.fixture_data."):
+                    if self._target_package_prefix and module.startswith(
+                        f"{self._target_package_prefix}."
+                    ):
                         # Convert src.fixture_data.shared_types -> .shared_types
-                        relative_module = module.replace("src.fixture_data.", ".")
+                        relative_module = module.replace(f"{self._target_package_prefix}.", ".")
                         needed_imports.add((relative_module, fixture_type.__name__))
                     else:
                         needed_imports.add((module, fixture_type.__name__))
@@ -164,23 +212,3 @@ class FixtureTypeMappingFileGenerator:
 
         f.writelines(entries)
         f.write("}\n")
-
-    def _format_with_ruff(self, file_path: Path) -> None:
-        """Format the generated file with ruff."""
-        try:
-            # Use ruff from this repository's venv
-            fixtures_root = Path(__file__).parent.parent  # music-assistant-nicovideo-fixtures root
-            ruff_path = fixtures_root / ".venv" / "bin" / "ruff"
-
-            subprocess.run(  # noqa: S603
-                [str(ruff_path), "check", "--fix", str(file_path)],
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=fixtures_root,
-            )
-            logger.info(f"Formatted {file_path} with ruff")
-        except subprocess.CalledProcessError as e:
-            logger.warning(f"Failed to format {file_path} with ruff: {e.stderr}")
-        except FileNotFoundError as e:
-            logger.warning(f"ruff command not found: {e}, skipping formatting")
