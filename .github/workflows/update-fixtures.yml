@@ -43,7 +43,6 @@ jobs:
         with:
           path: |
             ~/.cache/pip
-            .venv
           key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-${{ github.event.repository.name }}-${{ hashFiles('**/pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-${{ github.event.repository.name }}-
@@ -55,9 +54,6 @@ jobs:
           pip install --upgrade pip
           # Install this package with dev dependencies
           pip install -e ".[dev]"
-          # Clone and install Music Assistant from your fork and branch
-          git clone --depth 1 --branch add-niconico-provider https://github.com/Shi-553/server.git /tmp/music-assistant-server
-          pip install -e /tmp/music-assistant-server
 
       - name: Update Niconico fixtures
         env:
@@ -65,17 +61,17 @@ jobs:
         run: |
           source .venv/bin/activate
           export PYTHONPATH="${PYTHONPATH}:$(pwd)"
-          python scripts/main.py 2>&1 | tee fixture-update.log
+          python src/fixture_generator/main.py 2>&1 | tee fixture-update.log
 
       - name: Check for fixture changes
         id: check_changes
         run: |
-          if [ ! -d "fixtures" ]; then
+          if [ ! -d "src/fixture_data/fixtures" ]; then
             echo "changes=false" >> $GITHUB_OUTPUT
             echo "No fixtures directory found"
           else
             # Add all files to staging to detect new files
-            git add fixtures/ fixture_types.py __init__.py 2>/dev/null || true
+            git add src/fixture_data/ 2>/dev/null || true
             if git diff --cached --quiet; then
               echo "changes=false" >> $GITHUB_OUTPUT
               echo "No fixture changes detected"
