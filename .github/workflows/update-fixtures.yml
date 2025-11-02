@@ -59,9 +59,7 @@ jobs:
         env:
           NICONICO_SESSION: ${{ secrets.NICONICO_SESSION }}
         run: |
-          source .venv/bin/activate
-          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
-          python src/fixture_generator/main.py 2>&1 | tee fixture-update.log
+          ./scripts/run_fixture_generator.sh 2>&1 | tee fixture-update.log
 
       - name: Check for fixture changes
         id: check_changes

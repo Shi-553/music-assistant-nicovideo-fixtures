@@ -54,7 +54,7 @@ pip install -e .
 export NICONICO_SESSION='your_test_account_session_token'
 
 # Run fixture generation
-python src/fixture_generator/main.py
+./scripts/run_fixture_generator.sh
 ```
 
 ### Update Fixtures in Music Assistant
